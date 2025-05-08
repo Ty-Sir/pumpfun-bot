@@ -6,7 +6,7 @@ use solana_client::nonblocking::rpc_client::RpcClient;
 
 use solana_sdk::{instruction::Instruction, pubkey::Pubkey, signature::Keypair, signer::Signer};
 use spl_associated_token_account;
-use spl_token::instruction::close_account;
+// use spl_token::instruction::close_account;
 
 use super::constants::*;
 use super::create_ix::{create_sell_ix, get_buy_ix};
@@ -200,14 +200,14 @@ pub async fn process_logs(
         )
         .unwrap();
 
-        let close_acc_ix = close_account(
-            &TOKEN_PROGRAM_ID,
-            &mint_ata,
-            &payer.pubkey(),
-            &payer.pubkey(),
-            &[&payer.pubkey()],
-        )
-        .unwrap();
+        // let close_acc_ix = close_account(
+        //     &TOKEN_PROGRAM_ID,
+        //     &mint_ata,
+        //     &payer.pubkey(),
+        //     &payer.pubkey(),
+        //     &[&payer.pubkey()],
+        // )
+        // .unwrap();
 
         let ixs_sell: Vec<Instruction> = vec![sell_ix, unit_limit_ix.clone()];
 

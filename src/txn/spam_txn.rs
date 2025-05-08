@@ -6,7 +6,6 @@ use solana_sdk::{
 use std::sync::Arc;
 use std::time::Instant;
 use tokio::task::JoinHandle;
-use tokio::time::{sleep, Duration};
 
 pub async fn spammer(
     prices_4_spam: Vec<Instruction>,
@@ -43,7 +42,7 @@ pub async fn spammer(
             match client_clone.send_transaction(&tx).await {
                 Ok(signature) => Some(signature.to_string()),
 
-                Err(e) => {
+                Err(_e) => {
                     // eprintln!("Failed to send transaction: {}", e);
                     None
                 }

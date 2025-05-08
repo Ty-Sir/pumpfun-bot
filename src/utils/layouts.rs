@@ -81,15 +81,15 @@ pub struct SerumMarket {
     _blob_7: [u8; 7],
 }
 
-#[inline(never)]
-pub fn decode_pool_info(mut pool_info: &[u8]) -> AmmInfoV4 {
-    AmmInfoV4::deserialize(&mut pool_info).unwrap()
-}
+// #[inline(never)]
+// pub fn decode_pool_info(mut pool_info: &[u8]) -> AmmInfoV4 {
+//     AmmInfoV4::deserialize(&mut pool_info).unwrap()
+// }
 
-#[inline(never)]
-pub fn decode_market_info(mut market_info: &[u8]) -> SerumMarket {
-    SerumMarket::deserialize(&mut market_info).unwrap()
-}
+// #[inline(never)]
+// pub fn decode_market_info(mut market_info: &[u8]) -> SerumMarket {
+//     SerumMarket::deserialize(&mut market_info).unwrap()
+// }
 
 #[derive(AnchorSerialize, AnchorDeserialize, Clone, Debug)]
 pub struct BondingCurveLayoutPF {
@@ -115,28 +115,28 @@ pub struct SellLayoutpf {
     min_sol_output: u64,
 }
 
-impl BondingCurveLayoutPF {
-    /// Returns `complete` as a boolean.
-    pub fn complete_bool(&self) -> bool {
-        self.complete
-    }
+// impl BondingCurveLayoutPF {
+//     /// Returns `complete` as a boolean.
+//     pub fn complete_bool(&self) -> bool {
+//         self.complete
+//     }
 
-    pub fn get_virtual_token_reserves(&self) -> u64 {
-        self.virtual_token_reserves
-    }
+//     pub fn get_virtual_token_reserves(&self) -> u64 {
+//         self.virtual_token_reserves
+//     }
 
-    // Getter for virtual_sol_reserves
-    pub fn get_virtual_sol_reserves(&self) -> u64 {
-        self.virtual_sol_reserves
-    }
+//     // Getter for virtual_sol_reserves
+//     pub fn get_virtual_sol_reserves(&self) -> u64 {
+//         self.virtual_sol_reserves
+//     }
 
-    /// Decodes from bytes, ensuring proper type management.
-    #[inline(never)]
-    pub fn decode_pump_fun_bonding_curve_info(mut bonding_curve_layout_pf: &[u8]) -> Self {
-        let deserialized = Self::deserialize(&mut bonding_curve_layout_pf).unwrap();
-        deserialized
-    }
-}
+//     /// Decodes from bytes, ensuring proper type management.
+//     #[inline(never)]
+//     pub fn decode_pump_fun_bonding_curve_info(mut bonding_curve_layout_pf: &[u8]) -> Self {
+//         let deserialized = Self::deserialize(&mut bonding_curve_layout_pf).unwrap();
+//         deserialized
+//     }
+// }
 
 // create event
 #[derive(AnchorSerialize, AnchorDeserialize, Clone, Debug)]
@@ -173,22 +173,22 @@ pub struct TradeEvent {
 }
 
 impl TradeEvent {
-    /// Returns `is_buy` as a boolean.
-    pub fn is_buy_bool(&self) -> bool {
-        self.is_buy
-    }
+    // /// Returns `is_buy` as a boolean.
+    // pub fn is_buy_bool(&self) -> bool {
+    //     self.is_buy
+    // }
 
-    pub fn get_sol_amount(&self) -> u64 {
-        self.sol_amount
-    }
+    // pub fn get_sol_amount(&self) -> u64 {
+    //     self.sol_amount
+    // }
 
-    pub fn get_token_amount(&self) -> u64 {
-        self.token_amount
-    }
+    // pub fn get_token_amount(&self) -> u64 {
+    //     self.token_amount
+    // }
 
-    pub fn get_timestamp(&self) -> i64 {
-        self.timestamp
-    }
+    // pub fn get_timestamp(&self) -> i64 {
+    //     self.timestamp
+    // }
 
     pub fn get_virtual_sol_reserves(&self) -> u64 {
         self.virtual_sol_reserves
