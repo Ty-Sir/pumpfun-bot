@@ -14,7 +14,7 @@ use super::pf_price::*;
 
 use crate::txn::spam_txn::spammer;
 
-use super::layouts::TradeEvent;
+use super::layouts::{CreateEvent, TradeEvent};
 
 async fn valid_logs(logs: &Vec<String>) -> bool {
     let mut a = false;
@@ -49,7 +49,6 @@ pub async fn process_logs(
     let mut mint = Pubkey::default();
     let mut bc_pk = Pubkey::default();
     let mut user = Pubkey::default();
-    let mut logs_counted = 0;
     let mut virtual_sol_reserves = 0;
     let mut virtual_token_reserves = 0;
 
@@ -59,38 +58,20 @@ pub async fn process_logs(
                 let log_data = log.replace("Program data: ", "");
                 let log_decoded = base64::decode(&log_data).expect("Failed to decode base64");
 
-                let len_data = log_decoded.len();
-
-                if len_data >= 180 && logs_counted == 0 {
-                    logs_counted = logs_counted + 1;
-
-                    // Convert slices to arrays safely
-                    if let Some(user_bytes) = log_decoded
-                        .get(len_data - 32..len_data)
-                        .and_then(|slice| slice.try_into().ok())
-                    {
-                        user = Pubkey::new_from_array(user_bytes);
-                        if let Some(bonding_curve_bytes) = log_decoded
-                            .get(len_data - 64..len_data - 32)
-                            .and_then(|slice| slice.try_into().ok())
-                        {
-                            bc_pk = Pubkey::new_from_array(bonding_curve_bytes);
-                            if let Some(mint_bytes) = log_decoded
-                                .get(len_data - 96..len_data - 64)
-                                .and_then(|slice| slice.try_into().ok())
-                            {
-                                let mint_temp = Pubkey::new_from_array(mint_bytes);
-                                if mint_temp.to_string().contains("pump") {
-                                    mint = mint_temp;
-                                }
-                            }
-                        }
-                    }
-                } else if logs_counted > 0 {
-                    //get bonding curve data from the create txn directly...
+                // if &log_decoded[8..].len() == &208 { or expect CreateEvent size
+                // or base64 log starts with G3KpTd7r
+                if log.contains("G3KpTd7r") {
+                    let create_event = CreateEvent::decode_create_event(&log_decoded[8..]);
+                    bc_pk = create_event.bonding_curve;
+                }
+                // if &log_decoded[8..].len() == &121 { or expect TradeEvent size
+                // or base64 log starts with vdt/007mYe
+                if log.contains("vdt/007mYe") {
                     let trade_event = TradeEvent::decode_trade_event(&log_decoded[8..]);
                     virtual_sol_reserves = trade_event.get_virtual_sol_reserves();
                     virtual_token_reserves = trade_event.get_virtual_token_reserves();
+                    mint = trade_event.mint;
+                    user = trade_event.user;
                 }
             }
         }

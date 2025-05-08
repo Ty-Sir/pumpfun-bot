@@ -57,7 +57,7 @@ pub struct AmmInfoV4 {
 
 #[derive(AnchorSerialize, AnchorDeserialize, Clone, Debug)]
 pub struct SerumMarket {
-    _blob_5: [u8; 5], //KOKIEZ
+    _blob_5: [u8; 5],   //KOKIEZ
     account_flags: u64, // Assuming ACCOUNT_FLAGS_LAYOUT is a u64 for this example
     serum_market: Pubkey,
     vault_signer_nonce: u64,
@@ -138,6 +138,27 @@ impl BondingCurveLayoutPF {
     }
 }
 
+// create event
+#[derive(AnchorSerialize, AnchorDeserialize, Clone, Debug)]
+pub struct CreateEvent {
+    pub name: String,
+    pub symbol: String,
+    pub uri: String,
+    pub mint: Pubkey,
+    pub bonding_curve: Pubkey,
+    pub user: Pubkey,
+    pub creator: Pubkey,
+    pub timestamp: i64,
+}
+
+impl CreateEvent {
+    /// Decodes from bytes, ensuring proper type management.
+    #[inline(never)]
+    pub fn decode_create_event(mut create_event_data: &[u8]) -> Self {
+        let deserialized = Self::deserialize(&mut create_event_data).unwrap();
+        deserialized
+    }
+}
 // trade event
 #[derive(AnchorSerialize, AnchorDeserialize, Clone, Debug)]
 pub struct TradeEvent {
