@@ -31,12 +31,12 @@ pub async fn main() {
 
     let empty_vec: Vec<Value> = vec![];
 
-    let payer_key = env::var("PAYER").expect("payer must be set in .env file");
+    let payer_key = env::var("payer").expect("payer must be set in .env file");
     let _payer = Arc::new(Keypair::from_base58_string(&payer_key));
 
-    let RPC_HTTPS_URL = env::var("RPC_HTTPS_URL").expect("RPC_HTTPS_URL must be set in .env file");
+    let rpc_http_url = env::var("rpc_http_url").expect("rpc_http_url must be set in .env file");
 
-    let WSS_HTTPS_URL = env::var("WSS_HTTPS_URL").expect("WSS_HTTPS_URL must be set in .env file");
+    let wss_http_url = env::var("wss_http_url").expect("wss_http_url must be set in .env file");
 
     let spam_limit = env::var("spam_limit")
         .map(|v| v.parse::<u64>().expect("spam_limit must be a valid u64"))
@@ -60,7 +60,7 @@ pub async fn main() {
 
     // constants more......
     let prices_4_spam = array_of_fees(spam_limit, budget_price).await;
-    let client = Arc::new(RpcClient::new(RPC_HTTPS_URL.to_string()));
+    let client = Arc::new(RpcClient::new(rpc_http_url.to_string()));
     let m_pk = _payer.as_ref().pubkey();
 
     let investment_lamported = investment * LAMPORTS_PER_SOL as f64;
@@ -72,7 +72,7 @@ pub async fn main() {
     //wssssssss
 
     loop {
-        match connect_async(WSS_HTTPS_URL.to_string()).await {
+        match connect_async(wss_http_url.to_string()).await {
             Ok((mut stream, _)) => {
                 println!("WebSocket is open");
 

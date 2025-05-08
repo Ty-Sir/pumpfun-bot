@@ -38,7 +38,7 @@ async fn valid_logs(logs: &Vec<String>) -> bool {
 pub async fn process_logs(
     logs: &Vec<String>,
     client: Arc<RpcClient>,
-    PAYER: Arc<Keypair>,
+    payer: Arc<Keypair>,
     investment_lamported: f64,
     slippage: f64,
     adjusted_investment_for_fees: f64,
@@ -120,12 +120,12 @@ pub async fn process_logs(
         // --------------------------------
         //create token ata.
         let mint_ata =
-            spl_associated_token_account::get_associated_token_address(&PAYER.pubkey(), &mint);
+            spl_associated_token_account::get_associated_token_address(&payer.pubkey(), &mint);
 
         let ix_ata: Instruction =
             spl_associated_token_account::instruction::create_associated_token_account(
-                &PAYER.pubkey(),
-                &PAYER.pubkey(),
+                &payer.pubkey(),
+                &payer.pubkey(),
                 &mint,
                 &TOKEN_PROGRAM_ID,
             );
@@ -138,14 +138,14 @@ pub async fn process_logs(
             bc_pk,
             bc_pk_ata,
             mint_ata,
-            PAYER.as_ref(),
+            payer.as_ref(),
         )
         .unwrap();
 
         // tx info--------------------
         let ixs: Vec<Instruction> = vec![ix_ata, buy_ix, unit_limit_ix.clone()];
 
-        spammer(prices_4_spam.clone(), &client, &PAYER, &m_pk, &ixs).await;
+        spammer(prices_4_spam.clone(), &client, &payer, &m_pk, &ixs).await;
 
         // // incase you wanted to exit on specific profits......  not fully implemented
         // let mut account_token_balance = 0;
@@ -196,28 +196,28 @@ pub async fn process_logs(
             bc_pk,
             bc_pk_ata,
             mint_ata,
-            PAYER.as_ref(),
+            payer.as_ref(),
         )
         .unwrap();
 
         let close_acc_ix = close_account(
             &TOKEN_PROGRAM_ID,
             &mint_ata,
-            &PAYER.pubkey(),
-            &PAYER.pubkey(),
-            &[&PAYER.pubkey()],
+            &payer.pubkey(),
+            &payer.pubkey(),
+            &[&payer.pubkey()],
         )
         .unwrap();
 
         let ixs_sell: Vec<Instruction> = vec![sell_ix, unit_limit_ix.clone()];
 
         //          let recent_blockhash1 = client.get_latest_blockhash_with_commitment(CommitmentConfig::processed()).await.unwrap(); //get blockhash
-        //        let tx = Transaction::new_signed_with_payer(&ixs_sell,Some(&PAYER.pubkey()), &[&PAYER], recent_blockhash1.0);
+        //        let tx = Transaction::new_signed_with_payer(&ixs_sell,Some(&payer.pubkey()), &[&payer], recent_blockhash1.0);
         //            let sig = client.send_transaction(&tx).await.unwrap();
         //   println!("sig: {}",&sig.to_string());
 
         println!("going to spam sell");
-        spammer(prices_4_spam.to_vec(), &client, &PAYER, &m_pk, &ixs_sell).await;
+        spammer(prices_4_spam.to_vec(), &client, &payer, &m_pk, &ixs_sell).await;
 
         println!("{}::DOne", Local::now().format("%Y-%m-%d %H:%M:%S"));
         println!("------------------------------------------------------------------");

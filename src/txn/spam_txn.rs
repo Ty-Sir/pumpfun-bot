@@ -11,7 +11,7 @@ use tokio::time::{sleep, Duration};
 pub async fn spammer(
     prices_4_spam: Vec<Instruction>,
     client: &Arc<RpcClient>,
-    PAYER: &Arc<Keypair>,
+    payer: &Arc<Keypair>,
     m_pk: &Pubkey,
     instructions_vec: &Vec<Instruction>,
 ) {
@@ -28,7 +28,7 @@ pub async fn spammer(
 
         let mut ix_vec = instructions_vec.clone();
         let client_clone = client.clone();
-        let payer_clone = PAYER.clone();
+        let payer_clone = payer.clone();
 
         ix_vec.push(price_ix);
 
